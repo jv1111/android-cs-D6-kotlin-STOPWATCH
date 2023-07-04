@@ -6,6 +6,7 @@ import android.content.Intent
 import android.content.IntentFilter
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import com.example.d6_kotlin_stopwatch.databinding.ActivityMainBinding
 import kotlin.math.roundToInt
 
@@ -33,13 +34,17 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun startOrStop() {
-        if (isStarted)
+        if (isStarted) {
             stop()
-        else
+        }
+        else {
             start()
+        }
     }
 
     private fun start() {
+        Log.i("myTag", "start Pressed")
+        Log.i("myTag", "putting extra current time (MAIN ACTIVITY)")
         serviceIntent.putExtra(StopWatchService.CURRENT_TIME,time)//send data to the service
         startService(serviceIntent)
         binding.btnStart.text = "Stop"
@@ -47,6 +52,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun stop() {
+        Log.i("myTag", "stop Pressed")
         stopService(serviceIntent)
         binding.btnStart.text = "Start"
         isStarted = false
@@ -60,12 +66,15 @@ class MainActivity : AppCompatActivity() {
 
     private val updateTime : BroadcastReceiver = object : BroadcastReceiver(){
         override fun onReceive(context: Context, intent: Intent) {
+            Log.i("myTag", "start broadcasting")
             time = intent.getDoubleExtra(StopWatchService.CURRENT_TIME,0.0)
+            Log.i("myTag","broadcast time: $time")
             binding.tvTime.text = getFormattedTime(time)
         }
     }
 
     private fun getFormattedTime(time:Double):String{
+        Log.i("myTag", "formatting time text")
         val timeInt = time.roundToInt()
         val hours = timeInt % 86400 / 3600
         val minutes = timeInt % 86400 % 3600 / 60
@@ -73,5 +82,5 @@ class MainActivity : AppCompatActivity() {
 
         return String.format("%02d:%02d:%02d",hours,minutes,seconds)
     }
-
+//TODO add Log to each function
 }
